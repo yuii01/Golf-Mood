@@ -9,7 +9,7 @@
             @import url('https://fonts.googleapis.com/css2?family=Sour+Gummy:ital,wght@0,100..900;1,100..900&display=swap');
 
             body {
-                background-color:lightpink;
+                background-image: none;
                 font-family: "Sour Gummy", sans-serif;
                 font-optical-sizing: auto;
                 font-style: normal;
@@ -193,13 +193,13 @@
                 let imageUrl = "";
 
                 if (month >= 3 && month <= 5) {
-                    imageUrl = "Images/spring.jpg";
+                    imageUrl = "Images/spring.png";
                 } else if (month >= 6 && month <= 8) {
-                    imageUrl = "Images/summer.jpg";
+                    imageUrl = "Images/summer.png";
                 } else if (month >= 9 && month <= 11) {
-                    imageUrl = "Images/autumn.jpg";
+                    imageUrl = "Images/autumn.png";
                 } else {
-                    imageUrl = "Images/winter.jpg";
+                    imageUrl = "Images/winter.png";
                 }
 
                 document.body.style.backgroundImage = `url('${imageUrl}')`;
