@@ -150,6 +150,12 @@
                 if (weatherText.includes("rain") || weatherText.includes("drizzle") || weatherText.includes("thunder")) {
                     mood = "🌧️ Rain check—but you're still tee-rific! 😁😁";
                     imgSrc = "Images/rainy.png";
+                } else if (weatherText.includes("thunder")){
+                    mood = "⚡ Bit dangerous, maybe text me instead?";
+                    imgSrc = "Images/thunderstorm.png";
+                } else if (weatherText.includes("snow")){
+                    mood = "❄️ Snowy weather, almost Christmas (maybe) 😁";
+                    imgSrc = "Images/snow.png";
                 } else if (tempF > 65 && tempF < 80 && windMph < 12) {
                     mood = "☀️ Go get your clubs!";
                     imgSrc = "Images/happy.png";
