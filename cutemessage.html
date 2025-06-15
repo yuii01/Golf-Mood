@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Golf Mood Forecast</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Sour+Gummy:ital,wght@0,100..900;1,100..900&display=swap');
+
+        body {
+            background-image: none;
+            font-family: "Sour Gummy", sans-serif;
+            font-optical-sizing: auto;
+            font-style: normal;
+            font-variation-settings: "wdth" 100;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        #content {
+            background-color: white;
+            width: 90%;
+            max-width: 600px;
+            min-height: 100vh;
+            margin: 0 auto;
+            border-left: 4px dotted darkblue;
+            border-right: 4px dotted darkblue;
+            box-sizing: border-box;
+            padding: 1em 1.5em;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1, p {
+            margin: 0.5em 0;
+        }
+
+        input, button {
+            font-family: "Sour Gummy", sans-serif;
+            font-optical-sizing: auto;
+            font-style: normal;
+            font-variation-settings: "wdth" 100;
+            text-align: center;
+            font-size: 1.1rem;
+            padding: 0.5em 0.75em;
+            margin-bottom: 1em;
+            width: 100%;
+            max-width: 400px;
+            box-sizing: border-box;
+            border: 2px solid #333;
+            border-radius: 4px;
+        }
+
+        button {
+            cursor: pointer;
+            background-color: #f4d9d9;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #e0c0c0;
+        }
+
+        /* Responsive tweaks */
+        @media (max-width: 480px) {
+            #content {
+                border-left: 2px dotted darkblue;
+                border-right: 2px dotted darkblue;
+                padding: 1em;
+            }
+
+            input, button {
+                font-size: 1rem;
+                max-width: 100%;
+            }
+
+            #moodImg {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="content">
+
+        <h1>✨Cute Message Generator🎀</h1>
+        <a href="index.html"><button>Back</button></a>
+        <button onclick="getCuteMessage()">click when you're ready!</button>
+        <p id="msgelem"></p>
+
+    </div>
+
+    <script>
+        
+        function setSeasonalBackgroundImage() {
+            const month = new Date().getMonth() + 1; // 1-12
+            let imageUrl = "";
+
+            if (month >= 3 && month <= 5) {
+                imageUrl = "Images/spring.png";
+            } else if (month >= 6 && month <= 8) {
+                imageUrl = "Images/summer.png";
+            } else if (month >= 9 && month <= 11) {
+                imageUrl = "Images/autumn.png";
+            } else {
+                imageUrl = "Images/winter.png";
+            }
+
+            document.body.style.backgroundImage = `url('${imageUrl}')`;
+            document.body.style.backgroundSize = "cover"; 
+            document.body.style.backgroundPosition = "center center";
+            document.body.style.backgroundRepeat = "no-repeat";
+        }
+
+        setSeasonalBackgroundImage();
+
+        function getCuteMessage() {
+            const messages = [
+                { text: "you're like the last cookie in the jar — rare, precious, and slightly crumbly", image: "Images/cookie.png" },
+                { text: "if a potato can become fries, you can become anything you dream of", image: "Images/potato.png" },
+                { text: "somewhere, a capybara vibed in your honor. be proud.", image: "Images/capybara.png" },
+                { text: "you're like a duck in a puddle of glitter - unstoppable and a bit sparkly today :D", image: "Images/duck.png" },
+                { text: "remember, if a potato can become fries, you can do anything. even nap... especially nap :O", image: "Images/napping.png" },
+                { text: "you're the glitter in the void. keep sparkling, space goblin gooooba", image: "Images/goblin.png" },
+                { text: "don't let anyone dim your sparkle. not even Gary the Moth (or gary the cat).", image: "Images/smile.png" },
+                { text: "73% magic, 12% chaos, and 15% snacks. Legendary ratio.", image: "Images/bibimbap.png" },
+                { text: "this message was formally approved by 3 out of 4 dancing frogs", image: "Images/frog.png" },
+                { text: "radiating the same energy as a raccoon with a diploma — chaotic and accomplished", image: "Images/raccoon.png" },
+            ];
+
+            const chaosMessages = [
+                {
+                    text: "a rainbow snake appears and demands a duel of interpretive dance. you accept and win :D",
+                    image: "Images/snake.png"
+                },
+                {
+                    text: "open your fridge and find... a working copy of Windows 98. hehe :p",
+                    image: "Images/window.png"
+                },
+                {
+                    text: "you are now the ruler of Chair Kingdom. all ottomans must bow before you.",
+                    image: "Images/chair.png"
+                }
+            ];
+
+            const msgelem = document.getElementById("msgelem");
+            msgelem.innerHTML = ""; // Clear previous message
+
+            // Reset styles
+            msgelem.style.color = "black";
+            msgelem.style.fontWeight = "normal";
+            msgelem.style.animation = "none";
+            msgelem.style.fontSize = "1.1rem";
+
+            const isChaos = Math.random() < 0.05;
+
+            let selected;
+            if (isChaos) {
+                selected = chaosMessages[Math.floor(Math.random() * chaosMessages.length)];
+                msgelem.style.color = "#9b00e8";
+                msgelem.style.fontWeight = "bold";
+                msgelem.style.fontSize = "100px";
+                msgelem.style.animation = "shake 0.5s infinite alternate";
+            } else {
+                selected = messages[Math.floor(Math.random() * messages.length)];
+            }
+
+            const img = document.createElement("img");
+            img.src = selected.image;
+            img.alt = "cute image";
+            img.style.maxWidth = "200px";
+            img.style.margin = "0 auto 0.5em auto";
+            img.style.marginBottom = "0.5em";
+            img.style.display = "block";
+
+            const text = document.createElement("span");
+            text.innerText = selected.text;
+
+            msgelem.classList.remove("fade-in"); // Reset animation
+            void msgelem.offsetWidth; // Force reflow
+            msgelem.classList.add("fade-in");
+
+            msgelem.appendChild(img);
+            msgelem.appendChild(text);
+        }
+
+
+    </script>
+</body>
+</html>

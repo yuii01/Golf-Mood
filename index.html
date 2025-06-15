@@ -1,61 +1,98 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>Golf Mood Forecast</title>
+        <title>Home</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
 
+        <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+        <script>
+        (function(){
+            emailjs.init("oW-y6ifM6LjJy6K9L");
+        })();
+        </script>
+
         <style>
-            
             @import url('https://fonts.googleapis.com/css2?family=Sour+Gummy:ital,wght@0,100..900;1,100..900&display=swap');
 
             body {
-                background-color:lightpink;
+                background-image: none;
                 font-family: "Sour Gummy", sans-serif;
                 font-optical-sizing: auto;
                 font-style: normal;
-                font-variation-settings:
-                    "wdth" 100;
+                font-variation-settings: "wdth" 100;
                 text-align: center;
                 margin: 0;
-            }
-
-            #moodImg {
-                max-width: 300px; 
-                display: none;
-                margin: 1em auto 0 auto;
-            }
-
-            input {
-                font-family: "Sour Gummy", sans-serif;
-                font-optical-sizing: auto;
-                font-style: normal;
-                font-variation-settings:
-                    "wdth" 100;
-                text-align: center;
-            }
-
-            button {
-                font-family: "Sour Gummy", sans-serif;
-                font-optical-sizing: auto;
-                font-style: normal;
-                font-variation-settings:
-                    "wdth" 100;
-                text-align: center;
-            }
-
-            input, button, p {
-                margin-bottom: 1em;
+                padding: 0;
+                min-height: 100vh;
             }
 
             #content {
                 background-color: white;
-                width: 600px;        
-                height: 100vh;      
-                margin: 0 auto;       
-                border-left: 4px dotted darkblue;   
-                border-right: 4px dotted darkblue; 
+                width: 90%;
+                max-width: 600px;
+                min-height: 100vh;
+                margin: 0 auto;
+                border-left: 4px dotted darkblue;
+                border-right: 4px dotted darkblue;
                 box-sizing: border-box;
-                padding: 1em;         
+                padding: 1em 1.5em;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            h1, p {
+                margin: 0.5em 0;
+            }
+
+            textarea, button {
+                font-family: "Sour Gummy", sans-serif;
+                font-optical-sizing: auto;
+                font-style: normal;
+                font-variation-settings: "wdth" 100;
+                text-align: center;
+                font-size: 1.1rem;
+                padding: 0.5em 0.75em;
+                margin-bottom: 1em;
+                width: 100%;
+                max-width: 400px;
+                box-sizing: border-box;
+                border: 2px solid #333;
+                border-radius: 4px;
+            }
+
+            button {
+                cursor: pointer;
+                background-color: #f4d9d9;
+                transition: background-color 0.3s ease;
+            }
+
+            button:hover {
+                background-color: #ddd;
+            }
+
+            textarea {
+                resize: none;
+                overflow: hidden;
+                transition: height 0.2s ease;
+            }
+
+            /* Responsive tweaks */
+            @media (max-width: 480px) {
+                #content {
+                    border-left: 2px dotted darkblue;
+                    border-right: 2px dotted darkblue;
+                    padding: 1em;
+                }
+
+                input, button {
+                    font-size: 1rem;
+                    max-width: 100%;
+                }
+
+                #moodImg {
+                    max-width: 100%;
+                }
             }
         </style>
         
@@ -64,151 +101,102 @@
     <body>
         <div id="content">
 
-            <h1>Golf Mood Today!</h1>
-            <p> Enter your city and state (i.e. city, state)</p>
-            <input type="text" id="cityinput" placeholder="city, state">
-            <br>
-            <button onclick="getGolfMood()">click :D</button>
-            <div id="mood"></div>
-            <img id="moodImg" src="">
-            <div id="data">
-                <button onclick="getData()">click for data :DD</button>
-            </div> 
+            <h1 id="greeting"></h1>
+
+            <textarea id="personalmsg" type="text" placeholder="type a message to me!" rows="1"></textarea>
+            <button onclick="sendEmail()" id="sendbutton">send! (takes a sec)</button>
+
+            <div id="list">
+                <a href="golfmood.html"><button>Golf Mood Forecast</button></a>
+                <a href="cutemessage.html"><button>Cute Message Generator</button></a>
+                //<a href=""><button>third feeecha</button></a>
+
+                <img id="foodoftheday"></div>
+            </div>
+            
 
         </div>
 
         <script>
-            async function getGolfMood() {
-                console.log("Golf Mood clicked!");
-
-                const rawInput = document.getElementById("cityinput").value.trim();
-                const moodImg = document.getElementById("moodImg");
-                document.getElementById("data").innerHTML = `<button onclick="getData()">click for data :DD</button>`;
-
-
-                if (!rawInput) {
-                    document.getElementById("mood").innerText = "⚠️ Please enter a city and state.";
-                    return;
+            function setGreetingMessage() {
+                console.log("Greeting MSG set started")
+                const hour = new Date().getHours() + 1; 
+                let greeting = "";
+                
+                if(hour < 5 || hour >= 22) { 
+                    greeting = "It's nighttime already, go to bed!";
+                } else if (hour > 5 && hour < 9) {
+                    greeting = "Good morning!! I hope you slept well 💤";
+                } else if (hour >= 9 && hour < 13) {
+                    greeting = "Its almost lunch time :O nom nom";
+                } else if (hour >= 13 && hour < 20) {
+                    greeting = "Maybe snack or dinner time?";
+                } else {
+                    greeting = "Almost sleep time, but not yet.."
                 }
 
-                const apiKey = "b56e0499b9124920af1204141251306";
-                const location = encodeURIComponent(rawInput);
-                const url = `https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${location}&aqi=no`;
+                console.log(greeting);
 
-                try {
-                    const response = await fetch(url);
-
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! Status: ${response.status}`);
-                    }
-
-                    const data = await response.json();
-                    
-                    const tempF = data.current.temp_f;
-                    const weatherText = data.current.condition.text.toLowerCase();
-                    const windMph = data.current.wind_mph;
-
-                    let mood = "";
-                    let imgSrc = "";
-
-                    if (weatherText.includes("rain") || weatherText.includes("drizzle") || weatherText.includes("thunder")) {
-                        mood = "🌧️ Rain check—but you're still tee-rific! 😁😁";
-                        imgSrc = "Images/rainy.png";
-                    } else if (tempF > 65 && tempF < 80 && windMph < 12) {
-                        mood = "☀️ Go get your clubs!";
-                        imgSrc = "Images/happy.png";
-                    } else if (windMph >= 15) {
-                        mood = "💨 Windy day 😞😞";
-                        imgSrc = "Images/windy.png";
-                    } else if (tempF < 50) {
-                        mood = "❄️ Too chilly — cuddles instead ❤️";
-                        imgSrc = "Images/cold.png";
-                    } else if (tempF > 80) {
-                        mood = "🔥 It's too hot, your clubs will start melting"
-                        imgSrc = "Images/hot.png";
-                    } else {
-                        mood = "🤔 Not ideal, but the course could still be fun!";
-                        imgSrc = "Images/neutral.png";
-                    }
-
-                    document.getElementById("mood").innerText = mood;
-
-                    moodImg.src = imgSrc;
-                    moodImg.style.display = "block";
-
-                    } catch (error) {
-                        console.error(error);
-                        document.getElementById("mood").innerText = "⚠️ Couldn't get the weather. Try another city.";
-                    }
+                document.getElementById("greeting").innerText = greeting;
+                console.log("Greeting MSG set completed");
             }
 
-            async function getData() {
-                console.log("clicked getData");
-
-                const rawInput = document.getElementById("cityinput").value.trim();
-                const dataOutput = document.getElementById("data");
-
-                if (!rawInput) {
-                    document.getElementById("mood").innerText = "⚠️ Please enter a city and state.";
-                    return;
-                }
-
-                const apiKey = "b56e0499b9124920af1204141251306";
-                const location = encodeURIComponent(rawInput);
-                const url = `https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${location}&aqi=no`;
-
-                try {
-                    const response = await fetch(url);
-
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! Status: ${response.status}`);
-                    }
-
-                    const data = await response.json();
-
-                    const tempF = data.current.temp_f;
-                    const feelsLike = data.current.feelslike_f;
-                    const weatherText = data.current.condition.text.toLowerCase();
-                    const windDir = data.current.wind_degree;
-                    const windMph = data.current.wind_mph;
-                    const humidity = data.current.humidity;
-
-                    const weatherInfo = `
-                        <p><strong>Temperature:</strong> ${tempF} °F (feels like ${feelsLike} °F)</p>
-                        <p><strong>-> unreliable :D -> Wind (not gusts!):</strong> ${windMph} mph ${windDir}</p>
-                        <p><strong>Humidity:</strong> ${humidity}%</p>
-                        <p><strong>Condition:</strong> ${weatherText}</p>
-                    `;
-
-                    dataOutput.innerHTML = `<button onclick="getData()">click for data :DD</button>` + weatherInfo;
-
-                } catch (error) {
-                    console.error(error);
-                    dataOutput.innerHTML = `<p>⚠️ Couldn't load weather data. Try again!</p>`;
-                }
-            }
+            setGreetingMessage();
 
             function setSeasonalBackgroundImage() {
+                console.log("Seasonal BG set started")
                 const month = new Date().getMonth() + 1; // 1-12
                 let imageUrl = "";
 
                 if (month >= 3 && month <= 5) {
-                    imageUrl = "Images/spring.jpg";
+                    imageUrl = "Images/spring.png";
                 } else if (month >= 6 && month <= 8) {
-                    imageUrl = "Images/summer.jpg";
+                    imageUrl = "Images/summer.png";
                 } else if (month >= 9 && month <= 11) {
-                    imageUrl = "Images/autumn.jpg";
+                    imageUrl = "Images/autumn.png";
                 } else {
-                    imageUrl = "Images/winter.jpg";
+                    imageUrl = "Images/winter.png";
                 }
+
+                console.log(imageUrl);
 
                 document.body.style.backgroundImage = `url('${imageUrl}')`;
                 document.body.style.backgroundSize = "cover"; 
                 document.body.style.backgroundPosition = "center center";
                 document.body.style.backgroundRepeat = "no-repeat";
+
+                console.log("Seasonal BG set completed");
             }
 
             setSeasonalBackgroundImage();
+
+            function sendEmail() {
+                const message = document.getElementById("personalmsg").value.trim();
+                const response = document.getElementById("sendbutton");
+
+                if (!message) {
+                    response.innerText = "type a message!";
+                    return;
+                }
+
+                emailjs.send("service_egbj8g5", "template_8vfo8jr", {
+                    message: message
+                }).then(
+                    function() {
+                        response.innerText = "sent successfully!";
+                    },
+                    function(error) {
+                        response.innerText = "failed to send message.";
+                    }
+                );
+            }
+
+            //resizing textarea
+            const textarea = document.getElementById("personalmsg");
+            textarea.addEventListener("input", () => {
+                textarea.style.height = "auto";
+                textarea.style.height = textarea.scrollHeight + "px";
+            })
 
 
         </script>

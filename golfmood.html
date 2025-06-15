@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Golf Mood Forecast</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Sour+Gummy:ital,wght@0,100..900;1,100..900&display=swap');
+
+        body {
+            background-image: none;
+            font-family: "Sour Gummy", sans-serif;
+            font-optical-sizing: auto;
+            font-style: normal;
+            font-variation-settings: "wdth" 100;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        #content {
+            background-color: white;
+            width: 90%;
+            max-width: 600px;
+            min-height: 100vh;
+            margin: 0 auto;
+            border-left: 4px dotted darkblue;
+            border-right: 4px dotted darkblue;
+            box-sizing: border-box;
+            padding: 1em 1.5em;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1, p {
+            margin: 0.5em 0;
+        }
+
+        input, button {
+            font-family: "Sour Gummy", sans-serif;
+            font-optical-sizing: auto;
+            font-style: normal;
+            font-variation-settings: "wdth" 100;
+            text-align: center;
+            font-size: 1.1rem;
+            padding: 0.5em 0.75em;
+            margin-bottom: 1em;
+            width: 100%;
+            max-width: 400px;
+            box-sizing: border-box;
+            border: 2px solid #333;
+            border-radius: 4px;
+        }
+
+        button {
+            cursor: pointer;
+            background-color: #f4d9d9;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #e0c0c0;
+        }
+
+        #moodImg {
+            max-width: 300px;
+            width: 80%;
+            display: none;
+            margin: 1em auto 0;
+            height: auto;
+        }
+
+        #data p {
+            margin: 0.3em 0;
+            font-size: 1rem;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Responsive tweaks */
+        @media (max-width: 480px) {
+            #content {
+                border-left: 2px dotted darkblue;
+                border-right: 2px dotted darkblue;
+                padding: 1em;
+            }
+
+            input, button {
+                font-size: 1rem;
+                max-width: 100%;
+            }
+
+            #moodImg {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="content">
+
+        <h1>Golf Mood Today!</h1>
+        <a href="index.html"><button>Back!</button></a>
+        <p> Enter your city and state (i.e. city, state)</p>
+        <input type="text" id="cityinput" placeholder="city, state" />
+        <button onclick="getGolfMood()">click :D</button>
+        <div id="mood"></div>
+        <img id="moodImg" src="" alt="Mood image" />
+        <div id="data">
+            <button onclick="getData()">click for data :DD</button>
+        </div> 
+
+    </div>
+
+    <script>
+        async function getGolfMood() {
+            console.log("Golf Mood clicked!");
+
+            const rawInput = document.getElementById("cityinput").value.trim();
+            const moodImg = document.getElementById("moodImg");
+            document.getElementById("data").innerHTML = `<button onclick="getData()">click for data :DD</button>`;
+
+            if (!rawInput) {
+                document.getElementById("mood").innerText = "⚠️ Please enter a city and state.";
+                return;
+            }
+
+            const apiKey = "b56e0499b9124920af1204141251306";
+            const location = encodeURIComponent(rawInput);
+            const url = `https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${location}&aqi=no`;
+
+            try {
+                const response = await fetch(url);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                const tempF = data.current.temp_f;
+                const weatherText = data.current.condition.text.toLowerCase();
+                const windMph = data.current.wind_mph;
+
+                let mood = "";
+                let imgSrc = "";
+
+                if (weatherText.includes("rain") || weatherText.includes("drizzle") || weatherText.includes("thunder")) {
+                    mood = "🌧️ Rain check—but you're still tee-rific! 😁😁";
+                    imgSrc = "Images/rainy.png";
+                } else if (weatherText.includes("thunder")){
+                    mood = "⚡ Bit dangerous, maybe text me instead?";
+                    imgSrc = "Images/thunderstorm.png";
+                } else if (weatherText.includes("snow")){
+                    mood = "❄️ Snowy weather, almost Christmas (maybe) 😁";
+                    imgSrc = "Images/snow.png";
+                } else if (tempF > 65 && tempF < 80 && windMph < 12) {
+                    mood = "☀️ Go get your clubs!";
+                    imgSrc = "Images/happy.png";
+                } else if (windMph >= 15) {
+                    mood = "💨 Windy day 😞😞";
+                    imgSrc = "Images/windy.png";
+                } else if (tempF < 50) {
+                    mood = "❄️ Too chilly — cuddles instead ❤️";
+                    imgSrc = "Images/cold.png";
+                } else if (tempF > 80) {
+                    mood = "🔥 It's too hot, your clubs will start melting";
+                    imgSrc = "Images/hot.png";
+                } else {
+                    mood = "🤔 Not ideal, but the course could still be fun!";
+                    imgSrc = "Images/neutral.png";
+                }
+
+                document.getElementById("mood").innerText = mood;
+
+                moodImg.src = imgSrc;
+                moodImg.style.display = "block";
+
+            } catch (error) {
+                console.error(error);
+                document.getElementById("mood").innerText = "⚠️ Couldn't get the weather. Try another city.";
+            }
+        }
+
+        async function getData() {
+            console.log("clicked getData");
+
+            const rawInput = document.getElementById("cityinput").value.trim();
+            const dataOutput = document.getElementById("data");
+
+            if (!rawInput) {
+                document.getElementById("mood").innerText = "⚠️ Please enter a city and state.";
+                return;
+            }
+
+            const apiKey = "b56e0499b9124920af1204141251306";
+            const location = encodeURIComponent(rawInput);
+            const url = `https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${location}&aqi=no`;
+
+            try {
+                const response = await fetch(url);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                const tempF = data.current.temp_f;
+                const feelsLike = data.current.feelslike_f;
+                const weatherText = data.current.condition.text.toLowerCase();
+                const windDir = data.current.wind_degree;
+                const windMph = data.current.wind_mph;
+                const humidity = data.current.humidity;
+
+                const weatherInfo = `
+                    <p><strong>Temperature:</strong> ${tempF} °F (feels like ${feelsLike} °F)</p>
+                    <p><strong>-> unreliable :D -> Wind (not gusts!):</strong> ${windMph} mph ${windDir}</p>
+                    <p><strong>Humidity:</strong> ${humidity}%</p>
+                    <p><strong>Condition:</strong> ${weatherText}</p>
+                `;
+
+                dataOutput.innerHTML = `<button onclick="getData()">click for data :DD</button>` + weatherInfo;
+
+            } catch (error) {
+                console.error(error);
+                dataOutput.innerHTML = `<p>⚠️ Couldn't load weather data. Try again!</p>`;
+            }
+        }
+
+        function setSeasonalBackgroundImage() {
+            const month = new Date().getMonth() + 1; // 1-12
+            let imageUrl = "";
+
+            if (month >= 3 && month <= 5) {
+                imageUrl = "Images/spring.png";
+            } else if (month >= 6 && month <= 8) {
+                imageUrl = "Images/summer.png";
+            } else if (month >= 9 && month <= 11) {
+                imageUrl = "Images/autumn.png";
+            } else {
+                imageUrl = "Images/winter.png";
+            }
+
+            document.body.style.backgroundImage = `url('${imageUrl}')`;
+            document.body.style.backgroundSize = "cover"; 
+            document.body.style.backgroundPosition = "center center";
+            document.body.style.backgroundRepeat = "no-repeat";
+        }
+
+        setSeasonalBackgroundImage();
+
+    </script>
+</body>
+</html>
